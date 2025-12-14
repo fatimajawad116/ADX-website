@@ -1,0 +1,30 @@
+
+.control {
+  color: #0A1F44; 
+  border-color: #FF9B42;
+}
+.control[data-active] {
+  background-color: #0A1F44 !important; 
+  border-color: #FF9B42 !important;   
+  color: #FF9B42 !important; 
+}
+
+.dropdown {
+  background-color: #0A1F44;
+  border: 1px solid #FF9B42;
+  border-radius: 12px;
+  width: 150px;
+}
+
+.option {
+  color: #FFFFFF;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  padding: 10px 15px;
+  border-radius: 8px;
+}
+
+.option:hover {
+  background-color: #FF9B42 !important;
+  color: #0A1F44   !important;
+}
