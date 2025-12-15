@@ -1,5 +1,5 @@
 import { Flex, Select, Textarea, TextInput } from "@mantine/core";
-
+import classes from "./PaginationStyles.module.css";
 interface WithdrawFieldsProps {
   paymentMethod: string | null;
   setPaymentMethod: (value: string | null) => void;
@@ -111,6 +111,10 @@ export default function WithdrawFields({
           value={paymentMethod}
           className="container"
           onChange={setPaymentMethod}
+          classNames={{
+            dropdown: classes.dropdown,
+            option: classes.option,
+          }}
           styles={{
             label: {
               color: "#CFCFCF",
