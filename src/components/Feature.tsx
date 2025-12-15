@@ -1,7 +1,7 @@
 import { Box, Flex, Text, useMantineTheme } from "@mantine/core";
 import imgFuture from "../assets/imgFeature.svg";
 import imgFuture2 from "../assets/imgFeature2.svg";
-import imgFuture3 from "../assets/imgFeature3.svg";
+import imgFuture3 from "../assets/landingImg.png";
 import { useMediaQuery } from "@mantine/hooks";
 import { useTranslation } from "react-i18next";
 export default function Feature() {

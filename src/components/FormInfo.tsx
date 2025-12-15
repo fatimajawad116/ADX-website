@@ -91,6 +91,14 @@ export default function FormInfo({ onNextStep }: FormInputProps) {
     mutationFn: RegisterUser,
     onSuccess: (data) => {
       console.log("Register One Step Successfull Data : ", data);
+      if (data.access_token) {
+        localStorage.setItem("authToken", data.access_token);
+        console.log("Token saved to localStorage.");
+      } else {
+        console.warn(
+          "Login successful, but no token was returned in the response."
+        );
+      }
       notifications.show({
         title: "One Step Successfull !",
         message: "Send Message verify code for your Gmail",

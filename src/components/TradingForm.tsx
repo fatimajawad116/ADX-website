@@ -32,8 +32,6 @@ interface TradingFormProps {
 }
 
 const data = [
-  { value: "buy", label: "Buy" },
-  { value: "sell", label: "Sell" },
   { value: "buy_limit", label: "Buy Limit" },
   { value: "sell_limit", label: "Sell Limit" },
   { value: "buy_stop", label: "Buy Stop" },
@@ -313,7 +311,7 @@ const TradingForm: React.FC<TradingFormProps> = ({
             <Flex direction={"column"} gap={"20px"} align="flex-start">
               <TradingInput
                 label={t("Order Type")}
-                value={orderType || "optional"}
+                value={orderType ? orderType : "optional"}
                 isSelect
                 onChange={setOrderType}
               />
