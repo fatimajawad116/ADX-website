@@ -24,6 +24,9 @@ export default function Register() {
   const handleBackClick = () => {
     navigate("/");
   };
+  const getLogin = () => {
+    navigate("/login");
+  };
   const renderCurrentStepComponent = () => {
     switch (activeStep) {
       case 1:
@@ -90,10 +93,10 @@ export default function Register() {
       <Text fz={{ base: "14px", sm: "16px" }} c={grayColor} mb="xl" fw={400}>
         {t("Already have an account?")}{" "}
         <Anchor
-          href="/login"
           c={orangeColor}
           fz={{ base: "14px", sm: "16px" }}
           td="underline"
+          onClick={getLogin}
         >
           {t("Login")}
         </Anchor>

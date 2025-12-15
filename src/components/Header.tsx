@@ -50,6 +50,10 @@ export default function Header() {
     setDrawerOpened(false);
     navigate("/register");
   };
+  const getLogin = () => {
+    setDrawerOpened(false);
+    navigate("/login");
+  };
   const NavLinks = ({ onClick = () => {} }) => (
     <Flex
       direction={isMobile ? "column" : "row"}
@@ -135,7 +139,6 @@ export default function Header() {
         <NavLinks onClick={() => setDrawerOpened(false)} />
         <Flex direction="column" gap="xl" mt="xl">
           <Anchor
-            href="/login"
             c={COLORS.background}
             style={{
               textDecoration: "none",
@@ -147,7 +150,10 @@ export default function Header() {
               width: "100%",
               textAlign: "left",
             }}
-            onClick={() => setDrawerOpened(false)}
+            onClick={() => {
+              setDrawerOpened(false);
+              getLogin();
+            }}
           >
             {t("Sign in")}
           </Anchor>
@@ -241,10 +247,10 @@ export default function Header() {
           {!isMobile && (
             <>
               <Anchor
-                href="/login"
                 size="md"
                 c={COLORS.text}
                 style={{ textDecoration: "none" }}
+                onClick={getLogin}
               >
                 {t("Sign in")}
               </Anchor>
