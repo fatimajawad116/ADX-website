@@ -8,23 +8,22 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import Footer from "../components/Footer";
-import Header from "../components/Header";
 import imgIcon from "../assets/icon-whatsapp.svg";
 import { useMediaQuery } from "@mantine/hooks";
+import HeaderMain from "../components/HeaderMain";
+import Header from "../components/Header";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 const CONTACTUS_ENDPOINT = "/contact-us";
 const CONTACTUS_URL = `${
   BASE_URL.endsWith("/api") ? BASE_URL : BASE_URL + "/api"
 }${CONTACTUS_ENDPOINT}`;
-
 interface ContactUs {
-  whatsapp_number: string;
-  direct_link: string;
+  contact_number: string;
+  phrase: string;
+  whatsapp_link: string;
 }
-
 async function fetchContactUs(): Promise<ContactUs> {
   const authToken = localStorage.getItem("authToken");
   if (!authToken) {
@@ -48,18 +47,16 @@ async function fetchContactUs(): Promise<ContactUs> {
     );
   }
   const data = await response.json();
-  return data.contact_details;
+  return data.data;
 }
-
 const formateContactUs = (contact: ContactUs) => {
   return {
-    whatsapp_number: contact.whatsapp_number || "",
-    direct_link: contact.direct_link || "",
+    contact_number: contact.contact_number || "",
+    phrase: contact.phrase || "",
+    whatsapp_link: contact.whatsapp_link || "",
   };
 };
-
-export default function ContactUs() {
-  const { t } = useTranslation();
+export default function MainContactUs() {
   const {
     data: contactUsData,
     isLoading,
@@ -69,14 +66,14 @@ export default function ContactUs() {
     queryFn: fetchContactUs,
   });
   const theme = useMantineTheme();
+  const { t } = useTranslation();
   const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
   const formattedData = contactUsData ? formateContactUs(contactUsData) : null;
-  console.log(formattedData);
 
   if (isLoading) {
     return (
       <Box>
-        <Header />
+        <HeaderMain />
         <Center h="70vh">
           <Loader size="xl" color="#FF9B42" />
         </Center>
@@ -88,7 +85,7 @@ export default function ContactUs() {
   if (error) {
     return (
       <Box>
-        <Header />
+        <HeaderMain />
         <Center h="70vh">
           <Text c="red" size="lg">
             Error: {error.message}
@@ -98,7 +95,6 @@ export default function ContactUs() {
       </Box>
     );
   }
-
   if (!formattedData) {
     return (
       <Box>
@@ -110,10 +106,9 @@ export default function ContactUs() {
       </Box>
     );
   }
-
   return (
     <>
-      <Header />
+      <HeaderMain />
       <Flex
         direction={"column"}
         py={"50px"}
@@ -129,15 +124,6 @@ export default function ContactUs() {
         >
           {t("Contact Us")}
         </Text>
-        <Text
-          c={"#FF9B42"}
-          style={{ lineHeight: "150%" }}
-          fz={isMobile ? "24px" : "36px"}
-          fw={"500"}
-        >
-          {t("Get in Touch with Us")}
-        </Text>
-
         <Flex direction={"column"}>
           <Text
             c={"#0A1F44"}
@@ -146,38 +132,13 @@ export default function ContactUs() {
             fw={"500"}
             w={isMobile ? "100%" : "1099px"}
           >
-            {t(
-              " We’re always happy to hear from you! Whether you have a question, feedback, or need assistance,don’t hesitate to reach out."
-            )}
-          </Text>
-          <Text
-            c={"#0A1F44"}
-            style={{ lineHeight: "150%" }}
-            fz={isMobile ? "16px" : "24px"}
-            fw={"500"}
-            w={isMobile ? "100%" : "1170px"}
-          >
-            {t(
-              "Our team is here to provide you with quick responses and the support you need."
-            )}
-          </Text>
-          <Text
-            c={"#0A1F44"}
-            style={{ lineHeight: "150%" }}
-            fz={isMobile ? "16px" : "24px"}
-            fw={"500"}
-            w={isMobile ? "100%" : "1110px"}
-          >
-            {t(
-              "To make it easier, we offer direct communication through WhatsApp. It’s the fastest way to connect with us and get real-time assistance."
-            )}
+            {formattedData.phrase}
           </Text>
         </Flex>
-
         <Flex
           mt={"20px"}
           justify={"space-between"}
-          w={isMobile ? "100%" : "50%"}
+          w={"50%"}
           direction={isMobile ? "column" : undefined}
           gap={isMobile ? "20px" : undefined}
         >
@@ -193,12 +154,11 @@ export default function ContactUs() {
               fw={"500"}
               style={{ lineHeight: "150%" }}
             >
-              {formattedData.whatsapp_number}
+              {formattedData.contact_number}
             </Text>
           </Flex>
-
           <Anchor
-            href={formattedData.direct_link}
+            href={formattedData.whatsapp_link}
             target="_blank"
             underline="never"
           >

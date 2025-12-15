@@ -20,8 +20,9 @@ const CONTACTUS_URL = `${
   BASE_URL.endsWith("/api") ? BASE_URL : BASE_URL + "/api"
 }${CONTACTUS_ENDPOINT}`;
 interface ContactUs {
-  whatsapp_number: string;
-  direct_link: string;
+  contact_number: string;
+  phrase: string;
+  whatsapp_link: string;
 }
 async function fetchContactUs(): Promise<ContactUs> {
   const authToken = localStorage.getItem("authToken");
@@ -46,12 +47,13 @@ async function fetchContactUs(): Promise<ContactUs> {
     );
   }
   const data = await response.json();
-  return data.contact_details; // نفترض أن contact_details هو عنصر واحد
+  return data.data;
 }
 const formateContactUs = (contact: ContactUs) => {
   return {
-    whatsapp_number: contact.whatsapp_number || "",
-    direct_link: contact.direct_link || "",
+    contact_number: contact.contact_number || "",
+    phrase: contact.phrase || "",
+    whatsapp_link: contact.whatsapp_link || "",
   };
 };
 export default function MainContactUs() {
@@ -122,14 +124,6 @@ export default function MainContactUs() {
         >
           {t("Contact Us")}
         </Text>
-        <Text
-          c={"#FF9B42"}
-          style={{ lineHeight: "150%" }}
-          fz={isMobile ? "24px" : "36px"}
-          fw={"500"}
-        >
-          {t("Get in Touch with Us")}
-        </Text>
         <Flex direction={"column"}>
           <Text
             c={"#0A1F44"}
@@ -138,31 +132,7 @@ export default function MainContactUs() {
             fw={"500"}
             w={isMobile ? "100%" : "1099px"}
           >
-            {t(
-              "We’re always happy to hear from you! Whether you have a question, feedback, or need assistance,don’t hesitate to reach out."
-            )}{" "}
-          </Text>
-          <Text
-            c={"#0A1F44"}
-            style={{ lineHeight: "150%" }}
-            fz={isMobile ? "16px" : "24px"}
-            fw={"500"}
-            w={isMobile ? "100%" : "1170px"}
-          >
-            {t(
-              "Our team is here to provide you with quick responses and the support you need."
-            )}
-          </Text>
-          <Text
-            c={"#0A1F44"}
-            style={{ lineHeight: "150%" }}
-            fz={isMobile ? "16px" : "24px"}
-            fw={"500"}
-            w={isMobile ? "100%" : "1110px"}
-          >
-            {t(
-              "To make it easier, we offer direct communication through WhatsApp. It’s the fastest way to connect with us and get real-time assistance."
-            )}
+            {formattedData.phrase}
           </Text>
         </Flex>
         <Flex
@@ -184,11 +154,11 @@ export default function MainContactUs() {
               fw={"500"}
               style={{ lineHeight: "150%" }}
             >
-              {formattedData.whatsapp_number}
+              {formattedData.contact_number}
             </Text>
           </Flex>
           <Anchor
-            href={formattedData.direct_link}
+            href={formattedData.whatsapp_link}
             target="_blank"
             underline="never"
           >
