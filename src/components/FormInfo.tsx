@@ -248,21 +248,11 @@ export default function FormInfo({ onNextStep }: FormInputProps) {
           mb="30px"
         >
           {t("By creating an account, you agree to our")}{" "}
-          <Anchor
-            href="#"
-            c={orangeColor}
-            td="underline"
-            fz={responsiveFontSize}
-          >
+          <Anchor c={orangeColor} td="underline" fz={responsiveFontSize}>
             {t("Terms of use")}
           </Anchor>{" "}
           {t("and")}{" "}
-          <Anchor
-            href="#"
-            c={orangeColor}
-            td="underline"
-            fz={responsiveFontSize}
-          >
+          <Anchor c={orangeColor} td="underline" fz={responsiveFontSize}>
             {t("Privacy Policy")}
           </Anchor>
         </Text>
