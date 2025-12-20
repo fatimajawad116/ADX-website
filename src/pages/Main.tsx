@@ -326,7 +326,7 @@ export default function Main() {
         w={"100%"}
         pt={"50px"}
         h={"52%"}
-        px={isMobile ? "20px" : "70px"}
+        px={isMobile ? "20px" : "40px"}
         gap={isMobile ? "30px" : "20px"}
         direction={isMobile ? "column" : undefined}
       >
