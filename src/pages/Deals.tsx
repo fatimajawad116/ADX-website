@@ -78,39 +78,92 @@ async function fetchDeals(dealType: "open" | "closed"): Promise<Deal[]> {
   }
 
   const data = await response.json();
-  return dealType === "open" ? data.open_deals || [] : data.closed_deals || [];
+  if (dealType === "open") {
+    return [...(data.open_deals || []), ...(data.pending_deals || [])];
+  }
+
+  return data.closed_deals || [];
 }
 
+// const formatDealForTable = (deal: Deal) => {
+//   const pnlValue = parseFloat(deal.pnl);
+//   const profitLoss = pnlValue.toFixed(2);
+//   const profitLossColor = pnlValue >= 0 ? "#53D258" : "#E25C5C";
+//   const executedDate = new Date(deal.executed_at);
+//   const datePart = executedDate.toISOString().split("T")[0];
+//   const timePart = executedDate.toLocaleTimeString("en-US", {
+//     hour: "2-digit",
+//     minute: "2-digit",
+//     second: "2-digit",
+//     hour12: false,
+//   });
+//   const openTime = `${datePart}\n${timePart}`;
+//    const isClosed = deal.status === "closed";
+//   return {
+//     id: `#${deal.order_id}`,
+//     order_id: deal.order_id,
+//     symbol: `${deal.asset_id}`,
+//     action: deal.side.charAt(0).toUpperCase() + deal.side.slice(1),
+//     lot: deal.lots.toFixed(2),
+//     openTime: openTime,
+//     takeProfit: deal.take_profit || "N/A",
+//     stopLoss: deal.stop_loss || "N/A",
+//     openRate: deal.entry_price || "N/A",
+//     currentRate: deal.current_rate || "N/A",
+//     profitLoss: profitLoss,
+//     profitLossColor: profitLossColor,
+//     isClosed: isClosed,
+//   };
+// };
 const formatDealForTable = (deal: Deal) => {
   const pnlValue = parseFloat(deal.pnl);
   const profitLoss = pnlValue.toFixed(2);
   const profitLossColor = pnlValue >= 0 ? "#53D258" : "#E25C5C";
-  const executedDate = new Date(deal.executed_at);
-  const datePart = executedDate.toISOString().split("T")[0];
-  const timePart = executedDate.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-  });
-  const openTime = `${datePart}\n${timePart}`;
-  const isClosed = deal.status !== "pending";
+
+  const dateSource =
+    deal.status === "pending" ? deal.created_at : deal.executed_at;
+
+  let datePart = "-";
+  let timePart = "";
+
+  if (dateSource) {
+    const parsedDate = new Date(dateSource);
+
+    if (!isNaN(parsedDate.getTime())) {
+      datePart = parsedDate.toISOString().split("T")[0];
+      timePart = parsedDate.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+    }
+  }
+
+  const openTime = timePart ? `${datePart}\n${timePart}` : datePart;
+
+  const isPending = deal.status === "pending";
+  const isClosed = deal.status === "closed" || deal.status === "executed";
+
   return {
     id: `#${deal.order_id}`,
     order_id: deal.order_id,
     symbol: `${deal.asset_id}`,
     action: deal.side.charAt(0).toUpperCase() + deal.side.slice(1),
-    lot: deal.lots.toFixed(2),
-    openTime: openTime,
-    takeProfit: deal.take_profit || "N/A",
-    stopLoss: deal.stop_loss || "N/A",
-    openRate: deal.entry_price || "N/A",
-    currentRate: deal.current_rate || "N/A",
-    profitLoss: profitLoss,
-    profitLossColor: profitLossColor,
-    isClosed: isClosed,
+    lot: Number(deal.lots).toFixed(2),
+    openTime,
+    takeProfit: deal.take_profit || "",
+    stopLoss: deal.stop_loss || "",
+    openRate: deal.entry_price || "",
+    currentRate: deal.current_rate || "",
+    closePrice: deal.close_price || "",
+    profitLoss,
+    profitLossColor,
+    isClosed,
+    isPending,
   };
 };
+
 interface UpdateSettingsPayload {
   take_profit: number;
   stop_loss: number;
@@ -194,18 +247,34 @@ export default function Deals() {
     queryKey: ["dealsData", dealType],
     queryFn: () => fetchDeals(dealType),
   });
+  // const formattedData = deals
+  //   ? deals.map((deal) => ({
+  //       ...formatDealForTable(deal),
+  //       orderId: deal.order_id,
+  //     }))
+  //   : [];
   const formattedData = deals
-    ? deals.map((deal) => ({
-        ...formatDealForTable(deal),
-        orderId: deal.order_id,
-      }))
+    ? deals.map((deal) => {
+        const dealDate =
+          deal.status === "pending" ? deal.created_at : deal.executed_at;
+
+        return {
+          ...formatDealForTable(deal),
+          orderId: deal.order_id,
+          dealDate,
+        };
+      })
     : [];
+
   const totalItems = formattedData.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const start = (activePage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
+  const sortedData = [...formattedData].sort((a, b) => {
+    return new Date(b.dealDate).getTime() - new Date(a.dealDate).getTime();
+  });
   const dataToDisplay = useMemo(() => {
-    return formattedData.slice(start, end);
+    return sortedData.slice(start, end);
   }, [formattedData, start, end]);
   const [isCloseModalOpened, { open: openCloseModal, close: closeCloseModal }] =
     useDisclosure(false);
@@ -265,8 +334,8 @@ export default function Deals() {
     setEditData({
       id: item.id,
       orderId: orderId,
-      takeProfit: item.takeProfit === "N/A" ? "0.00" : item.takeProfit,
-      stopLoss: item.stopLoss === "N/A" ? "0.00" : item.stopLoss,
+      takeProfit: item.takeProfit === "" ? "0.00" : item.takeProfit,
+      stopLoss: item.stopLoss === "" ? "0.00" : item.stopLoss,
     });
     open();
   };
@@ -318,7 +387,7 @@ export default function Deals() {
     t("Take Profit"),
     t("Stop Loss"),
     t("Open Rate"),
-    t("Current Rate"),
+    dealType === "open" ? t("Current Rate") : t("Close Rate"),
     t("Profit / Loss"),
   ];
 
@@ -338,13 +407,6 @@ export default function Deals() {
   const isAnyActionPending =
     updateMutation.isPending || closeMutation.isPending;
   const rows = dataToDisplay.map((item, index) => {
-    const isPending = updateMutation.isPending || closeMutation.isPending;
-    const isRowDisabled = item.isClosed || isPending;
-    const isClosedAndCannotBeModified = item.isClosed;
-    const isCloseButtonDisabled =
-      isClosedAndCannotBeModified ||
-      isAnyActionPending ||
-      dealType === "closed";
     return (
       <Table.Tr
         key={index}
@@ -352,30 +414,34 @@ export default function Deals() {
           borderBottom: "1px solid #FF9B42",
           height: "75px",
           textAlign: "center",
-          backgroundColor: item.isClosed
+          backgroundColor: item.isPending
             ? "rgba(255, 255, 255, 0.1)"
             : "#0A1F44",
-          opacity: item.isClosed ? 0.7 : 1,
-          pointerEvents: isRowDisabled && dealType === "open" ? "none" : "auto",
+          opacity: item.isPending ? 0.7 : 1,
+          pointerEvents: item.isPending ? "none" : "auto",
         }}
       >
         <Table.Td>
-          <Flex justify={"center"} align={"center"} gap={"20px"}>
-            <IconCircleMinus
-              size={23}
-              color={isRowDisabled ? "#888" : "#FF9B42"}
-              style={{ cursor: isRowDisabled ? "not-allowed" : "pointer" }}
-              onClick={
-                isCloseButtonDisabled ? () => {} : () => handleCloseClick(item)
-              }
-            />
-            <IconPencil
-              size={23}
-              color={isRowDisabled ? "#888" : "#FF9B42"}
-              style={{ cursor: isRowDisabled ? "not-allowed" : "pointer" }}
-              onClick={isRowDisabled ? () => {} : () => handleEditClick(item)}
-            />
-          </Flex>
+          {dealType === "open" && (
+            <Flex justify={"center"} align={"center"} gap={"20px"}>
+              <IconCircleMinus
+                size={23}
+                color={item.isPending ? "#888" : "#FF9B42"}
+                style={{ cursor: item.isPending ? "not-allowed" : "pointer" }}
+                onClick={
+                  item.isPending ? undefined : () => handleCloseClick(item)
+                }
+              />
+              <IconPencil
+                size={23}
+                color={item.isPending ? "#888" : "#FF9B42"}
+                style={{ cursor: item.isPending ? "not-allowed" : "pointer" }}
+                onClick={
+                  item.isPending ? undefined : () => handleEditClick(item)
+                }
+              />
+            </Flex>
+          )}
         </Table.Td>
         <Table.Td>{item.id}</Table.Td>
         <Table.Td>{item.symbol}</Table.Td>
@@ -394,7 +460,11 @@ export default function Deals() {
         <Table.Td>{item.takeProfit}</Table.Td>
         <Table.Td>{item.stopLoss}</Table.Td>
         <Table.Td>{item.openRate}</Table.Td>
-        <Table.Td>{item.currentRate}</Table.Td>
+        <Table.Td>
+          {dealType === "open"
+            ? item.currentRate
+            : item.closePrice || item.currentRate}
+        </Table.Td>
         <Table.Td>
           <Text fw={600} c={item.profitLossColor}>
             {item.profitLoss}
@@ -403,6 +473,7 @@ export default function Deals() {
       </Table.Tr>
     );
   });
+
   const paginationStore: PaginationControl = {
     current_page: activePage,
     setItems_per_page: (value) => {

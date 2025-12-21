@@ -4,13 +4,13 @@ import { Outlet } from "react-router-dom";
 import Footer from "./Footer";
 
 export default function Layout() {
-    return(
-        <>
-        <Flex direction={"column"}>
-            <HeaderMain />
-            <Outlet />
-            <Footer />
-        </Flex>
-        </>
-    )
+  return (
+    <>
+      <Flex direction={"column"}>
+        <HeaderMain />
+        <Outlet />
+        <Footer />
+      </Flex>
+    </>
+  );
 }

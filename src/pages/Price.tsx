@@ -124,7 +124,7 @@ export default function Price() {
     }
   }, [assetId]);
   return (
-    <>
+    <Flex h={"100vh"} direction={"column"} w={"100%"} justify={"space-between"}>
       <Header />
       <Flex
         justify={"space-around"}
@@ -144,6 +144,6 @@ export default function Price() {
         />
       </Flex>
       <Footer />
-    </>
+    </Flex>
   );
 }

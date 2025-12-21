@@ -269,7 +269,7 @@ export default function FormInfo({ onNextStep }: FormInputProps) {
       <Button
         w="100%"
         maw={800}
-        size="lg"
+        h={"60px"}
         bg={whiteColor}
         radius="10px"
         mb={"30px"}

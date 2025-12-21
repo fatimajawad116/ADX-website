@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import {
   IconChevronDown,
   IconChevronUp,
+  IconLogout,
   IconUserEdit,
 } from "@tabler/icons-react";
 type Language = "en" | "ar";
@@ -222,7 +223,7 @@ export default function HeaderMain() {
         <Flex align="center" gap="xl">
           {!isMobile && <></>}
           {!isMobile && (
-            <Flex align={"center"} gap={"20px"}>
+            <Flex align={"center"} gap={"10px"}>
               <Select
                 data={[
                   { value: "en", label: "English" },
@@ -258,6 +259,19 @@ export default function HeaderMain() {
                   onClick={openProfile}
                 />
               </Flex>
+              <IconLogout
+                title="logout"
+                size={24}
+                color="#FF9B42"
+                style={{
+                  cursor: "pointer",
+                  marginLeft: "8px",
+                }}
+                onClick={() => {
+                  localStorage.removeItem("authToken");
+                  window.location.href = "/";
+                }}
+              />
             </Flex>
           )}
         </Flex>

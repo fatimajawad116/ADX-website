@@ -13,6 +13,7 @@ import Deals from "../pages/Deals";
 import Wallet from "../pages/Wallet";
 import LoginDashboard from "../pages/LoginDashboard";
 import ContactUs from "../pages/ContactUs";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 export type AppRoute = RouteObject & {
   path: string;
@@ -43,15 +44,27 @@ export const routes: AppRoute[] = [
   },
   {
     path: "/mainpage",
-    element: <Main />,
+    element: (
+      <ProtectedRoute>
+        <Main />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/deals",
-    element: <Deals />,
+    element: (
+      <ProtectedRoute>
+        <Deals />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/wallet",
-    element: <Wallet />,
+    element: (
+      <ProtectedRoute>
+        <Wallet />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/login",

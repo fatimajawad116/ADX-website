@@ -110,7 +110,7 @@ export default function EditTradeModal({
           minWidth: isMobile ? "90vw" : "534px",
           maxWidth: isMobile ? "90vw" : "600px",
           width: "100%",
-          height: isMobile ? "auto" : "100%",
+          height: isMobile ? "auto" : "60%",
           maxHeight: isMobile ? "90vh" : "900px",
           backgroundColor: "#0A1F44",
           border: "2px solid #FF9B42",
@@ -140,12 +140,12 @@ export default function EditTradeModal({
           >
             Edit Trade Settings
           </Text>
-          <Flex gap="40px" w="100%" justify="space-between">
+          <Flex gap="40px" w="100%" justify="space-between" pt={"20px"}>
             <TextInput
               label="Take Profit"
               placeholder="Enter take profit"
               fw={"400"}
-              fz={"20px"}
+              fz={"24px"}
               lh={"100%"}
               c={"#CFCFCF"}
               value={editData.takeProfit}
@@ -167,6 +167,7 @@ export default function EditTradeModal({
                   textAlign: "center",
                   width: "100%",
                   marginBottom: "5px",
+                  fontSize: "20px",
                 },
               }}
             />
@@ -196,6 +197,7 @@ export default function EditTradeModal({
                   textAlign: "center",
                   width: "100%",
                   marginBottom: "5px",
+                  fontSize: "20px",
                 },
               }}
               style={{ flex: 1 }}

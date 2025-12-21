@@ -260,11 +260,10 @@ export default function Login() {
 
       <Button
         w="100%"
+        h={"60px"}
         maw={800}
-        size="lg"
         bg={whiteColor}
         radius="10px"
-        mb={"30px"}
         onClick={async () => {
           const isValid = validateForm();
           if (!isValid) {
