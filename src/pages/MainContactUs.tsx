@@ -11,7 +11,6 @@ import Footer from "../components/Footer";
 import imgIcon from "../assets/icon-whatsapp.svg";
 import { useMediaQuery } from "@mantine/hooks";
 import HeaderMain from "../components/HeaderMain";
-import Header from "../components/Header";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
@@ -98,7 +97,7 @@ export default function MainContactUs() {
   if (!formattedData) {
     return (
       <Box>
-        <Header />
+        <HeaderMain />
         <Center h="70vh">
           <Text size="lg">{t("Contact details are not available.")}</Text>
         </Center>

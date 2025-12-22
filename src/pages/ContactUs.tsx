@@ -10,10 +10,9 @@ import {
 import Footer from "../components/Footer";
 import imgIcon from "../assets/icon-whatsapp.svg";
 import { useMediaQuery } from "@mantine/hooks";
-import HeaderMain from "../components/HeaderMain";
-import Header from "../components/Header";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import Header from "../components/Header";
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 const CONTACTUS_ENDPOINT = "/contact-us";
 const CONTACTUS_URL = `${
@@ -25,15 +24,10 @@ interface ContactUs {
   whatsapp_link: string;
 }
 async function fetchContactUs(): Promise<ContactUs> {
-  const authToken = localStorage.getItem("authToken");
-  if (!authToken) {
-    throw new Error("Authentication token not found. Please log in.");
-  }
   const response = await fetch(CONTACTUS_URL, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${authToken}`,
     },
   });
 
@@ -73,7 +67,7 @@ export default function MainContactUs() {
   if (isLoading) {
     return (
       <Box>
-        <HeaderMain />
+        <Header />
         <Center h="70vh">
           <Loader size="xl" color="#FF9B42" />
         </Center>
@@ -85,7 +79,7 @@ export default function MainContactUs() {
   if (error) {
     return (
       <Box>
-        <HeaderMain />
+        <Header />
         <Center h="70vh">
           <Text c="red" size="lg">
             Error: {error.message}
@@ -108,7 +102,7 @@ export default function MainContactUs() {
   }
   return (
     <>
-      <HeaderMain />
+      <Header />
       <Flex
         direction={"column"}
         py={"50px"}

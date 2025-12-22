@@ -31,7 +31,7 @@ interface Deal {
   id: number;
   user_id: number;
   order_id: number;
-  asset_id: number;
+  symbol: string;
   side: "buy" | "sell";
   lots: number;
   entry_price: string;
@@ -148,7 +148,7 @@ const formatDealForTable = (deal: Deal) => {
   return {
     id: `#${deal.order_id}`,
     order_id: deal.order_id,
-    symbol: `${deal.asset_id}`,
+    symbol: `${deal.symbol}`,
     action: deal.side.charAt(0).toUpperCase() + deal.side.slice(1),
     lot: Number(deal.lots).toFixed(2),
     openTime,

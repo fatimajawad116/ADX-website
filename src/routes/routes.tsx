@@ -36,7 +36,11 @@ export const routes: AppRoute[] = [
   },
   {
     path: "/contact-us",
-    element: <MainContactUs />,
+    element: (
+      <ProtectedRoute>
+        <MainContactUs />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/contactUs",
