@@ -27,13 +27,14 @@ export default function NewRequest({ opened, onClose }: NewRequestProps) {
   const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const resetFormStates = () => {
     setIsDeposit(true);
-    setPaymentMethod("bank_transfer");
+    setPaymentMethod("Bank Transfer");
     setAmount("");
     setNotes("");
     setError(null);
     setIsLoading(false);
     setBankName("");
     setAccountHolder("");
+    setTransactionId("");
     setAccountNumber("");
     setIban("");
     setSwiftBicCode("");
@@ -43,6 +44,7 @@ export default function NewRequest({ opened, onClose }: NewRequestProps) {
     setExpirationDate("");
     setCardHolderName("");
     setCvv("");
+    setCurrency("");
   };
   const handleClose = () => {
     resetFormStates();
@@ -55,6 +57,7 @@ export default function NewRequest({ opened, onClose }: NewRequestProps) {
   const [amount, setAmount] = useState<string>("");
   const [bankName, setBankName] = useState<string>("");
   const [accountHolder, setAccountHolder] = useState<string>("");
+  const [transactionId, setTransactionId] = useState<string>("");
   const [accountNumber, setAccountNumber] = useState<string>("");
   const [iban, setIban] = useState<string>("");
   const [swiftBicCode, setSwiftBicCode] = useState<string>("");
@@ -65,12 +68,13 @@ export default function NewRequest({ opened, onClose }: NewRequestProps) {
   const [cardHolderName, setCardHolderName] = useState<string>("");
   const [cvv, setCvv] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
+  const [currency, setCurrency] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const showBankFields = paymentMethod === "bank_transfer";
-  const showCard = paymentMethod === "card";
-  const showOther = paymentMethod === "other";
-  const showCurrencies = paymentMethod === "currencies";
+  const showBankFields = paymentMethod === "Bank Transfer";
+  const showCard = paymentMethod === "Credit Card";
+  const showOther = paymentMethod === "Other";
+  const showCurrencies = paymentMethod === "Digital Currencies";
   const depositButtonStyles = isDeposit
     ? {
         c: "#F8F8FC",
@@ -121,27 +125,30 @@ export default function NewRequest({ opened, onClose }: NewRequestProps) {
       return;
     }
     let details: Record<string, string> = {};
-    if (paymentMethod === "bank_transfer") {
+    if (paymentMethod === "Bank Transfer") {
       details = {
         bank_name: bankName,
         account_holder: accountHolder,
+        transaction_id: transactionId,
         account_number: accountNumber,
         iban: iban,
-        swift_bic_code: swiftBicCode,
+        swift: swiftBicCode,
       };
-    } else if (paymentMethod === "currencies") {
+    } else if (paymentMethod === "Digital Currencies") {
       details = {
+        currency_type: currency,
+        transaction_id: transactionId,
         wallet: wallet,
         wallet_address: walletAddress,
       };
-    } else if (paymentMethod === "card") {
+    } else if (paymentMethod === "Credit Card") {
       details = {
         card_number: cardNumber,
         expiration_date: expirationDate,
         cardholder_name: cardHolderName,
         cvv: cvv,
       };
-    } else if (paymentMethod === "other") {
+    } else if (paymentMethod === "Other") {
       details = {
         notes: notes,
       };
@@ -153,6 +160,7 @@ export default function NewRequest({ opened, onClose }: NewRequestProps) {
       details: details,
       transaction_type: isDeposit ? "deposit" : "withdraw",
     };
+    console.log("البيانات المرسلة:", requestBody);
     try {
       const response = await fetch(REQUEST_URL, {
         method: "POST",
@@ -325,6 +333,26 @@ export default function NewRequest({ opened, onClose }: NewRequestProps) {
             showCurrencies={showCurrencies}
             showCard={showCard}
             showOther={showOther}
+            notes={notes} // مرر القيمة
+            setNotes={setNotes}
+            bankName={bankName}
+            setBankName={setBankName}
+            accountHolder={accountHolder}
+            setAccountHolder={setAccountHolder}
+            setTransactionId={setTransactionId}
+            transactionId={transactionId}
+            walletAddress={walletAddress}
+            setWalletAddress={setWalletAddress}
+            currency={currency}
+            setCurrency={setCurrency}
+            cvv={cvv}
+            setCvv={setCvv}
+            cardHolderName={cardHolderName}
+            setCardHolderName={setCardHolderName}
+            expirationDate={expirationDate}
+            setExpirationDate={setExpirationDate}
+            cardNumber={cardNumber}
+            setCardNumber={setCardNumber}
           />
         ) : (
           <WithdrawFields

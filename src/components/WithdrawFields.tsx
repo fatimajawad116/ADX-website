@@ -34,10 +34,10 @@ interface WithdrawFieldsProps {
 }
 
 const paymentMethods = [
-  { value: "bank_transfer", label: "Bank Transfer" },
-  { value: "currencies", label: "Digital Currencies" },
-  { value: "card", label: "Credit Card" },
-  { value: "other", label: "Other" },
+  { value: "Bank Transfer", label: "Bank Transfer" },
+  { value: "Digital Currencies", label: "Digital Currencies" },
+  { value: "Credit Card", label: "Credit Card" },
+  { value: "Other", label: "Other" },
 ];
 
 export default function WithdrawFields({
